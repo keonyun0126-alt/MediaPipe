@@ -35,7 +35,7 @@ face_mesh = mp_face_mesh.FaceMesh(
 # cap = cv2.VideoCapture(0)  # 웹캠 사용 시
 cap = cv2.VideoCapture("face.mp4")  # 동영상 파일 사용 시
 
-print("📷 배경 블러 + 얼굴 박스 + 눈·코·입·귀 점 찍기 통합 시작 — ESC를 눌러 종료합니다.")
+print("📷 배경 블러(강하게) + 얼굴 박스 + 눈·코·입·귀 점 찍기 통합 시작 — ESC를 눌러 종료합니다.")
 
 # 💡 주요 랜드마크 인덱스 정의 (귀 부위 234, 454 추가)
 LEFT_EYE = [33, 133, 160, 158, 130, 246]
@@ -61,11 +61,14 @@ while cap.isOpened():
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     # -----------------------------------------
-    # ① 배경 분리 및 블러 합성
+    # ① 배경 분리 및 블러 합성 (강한 블러 적용: (111, 111))
     # -----------------------------------------
     result_seg = segmenter.process(rgb)
     mask = (result_seg.segmentation_mask > 0.5).astype(np.uint8)
-    blur = cv2.GaussianBlur(frame, (31, 31), 0)
+    
+    # 💡 블러 강도 높임 (숫자가 클수록 배경이 흐려집니다, 반드시 홀수 입력)
+    blur = cv2.GaussianBlur(frame, (111, 111), 0)
+    
     output = frame * mask[..., None] + blur * (1 - mask[..., None])
     output = output.astype(np.uint8)
 
