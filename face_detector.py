@@ -67,7 +67,7 @@ while cap.isOpened():
     mask = (result_seg.segmentation_mask > 0.5).astype(np.uint8)
     
     # 💡 배경 블러 강도 원복 ((31, 31))
-    blur = cv2.GaussianBlur(frame, (31, 31), 0)
+    blur = cv2.GaussianBlur(frame, (1, 1), 0)
     
     output = frame * mask[..., None] + blur * (1 - mask[..., None])
     output = output.astype(np.uint8)
